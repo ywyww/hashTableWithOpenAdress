@@ -50,8 +50,8 @@ bool checkIfHashInMassive(int* massiveCollisions, int quantity, int hash);
 int collisionCount(PassportData* headHumanList, int numberOfTableKeys);
 
 void pushBackChainNode(PassportData*, int&);
-void setDeletedNodeByKey(string key, PassportData*);
-void setDeletedNodeByNumber(int, PassportData*);
+void setDeletedNodeByKey(PassportData*, string key);
+void setDeletedNodeByNumber(PassportData*, int);
 
 void writeToFile(PassportData*, string);
 void writeSingleNode(PassportData*, ofstream&);
@@ -463,7 +463,6 @@ void deleteTable(PassportData** hashTable, int numberOfTableKeys) {
 	}
 	delete[] hashTable;
 }
-
 void deleteChain(PassportData* hashElem) {
 	PassportData* tmpPtr = hashElem;
 	while (tmpPtr != nullptr) {
@@ -480,12 +479,12 @@ PassportData* searchTable(string key, PassportData** hashTable, int numberOfTabl
 	bool isFoundKey = false;
 	while (!isFoundKey) {
 		isFoundKey = (hashTable[hash]->dateOfBirth == key);
+		if (isFoundKey) return hashTable[hash];
 		hash++;
 		counter++;
 		if (counter == numberOfTableKeys) return nullptr;
 		if (hash == numberOfTableKeys) hash = 0;
 	}
-	return hashTable[--hash];
 }
 PassportData* searchChainByKey(PassportData* chainHead, string key) {
 	PassportData* chainNode = chainHead;
@@ -671,16 +670,9 @@ void correctNodeByKey(PassportData* headChain, string key) {
 	}
 
 	PassportData pd = cinNode();
-	pd.dateOfBirth = toCorrect->dateOfBirth;
-	dataCopy(toCorrect, pd);
+	toCorrect->passportNumber = pd.passportNumber;
+	toCorrect->name = pd.name;
 }
-PassportData cinNode() {
-	PassportData pd;
-	cout << "name? "; cin >> pd.name;
-	cout << "passport? "; cin >> pd.passportNumber;
-	return pd;
-}
-
 void correctNodeByNumber(PassportData* headChain, int numberOfTheTableKeys) {
 	PassportData* toCorrect = searchChainByNumber(headChain, numberOfTheTableKeys);
 	if (toCorrect == nullptr) {
@@ -689,6 +681,12 @@ void correctNodeByNumber(PassportData* headChain, int numberOfTheTableKeys) {
 	}
 
 	PassportData pd = cinNode();
-	pd.dateOfBirth = toCorrect->dateOfBirth;
-	dataCopy(toCorrect, pd);
+	toCorrect->passportNumber = pd.passportNumber;
+	toCorrect->name = pd.name;
+}
+PassportData cinNode() {
+	PassportData pd;
+	cout << "name? "; cin >> pd.name;
+	cout << "passport? "; cin >> pd.passportNumber;
+	return pd;
 }
